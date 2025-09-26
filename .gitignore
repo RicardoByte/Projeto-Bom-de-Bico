@@ -1,0 +1,43 @@
+# ===================================================================
+# Arquivos gerados pelo Maven
+# ===================================================================
+# A pasta 'target' é onde o Maven coloca todos os arquivos compilados,
+# pacotes (.jar, .war), relatórios de teste, etc. Esta é a pasta
+# MAIS IMPORTANTE a ser ignorada.
+/target/
+
+# Arquivos de log do Maven
+pom.xml.tag
+pom.xml.next
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# ===================================================================
+# Arquivos da IDEs
+# ===================================================================
+
+# VS Code
+.vscode/
+
+
+# ===================================================================
+# Arquivos de Log e Runtime
+# ===================================================================
+# Arquivos de log genéricos
+*.log
+logs/
+
+# Arquivos de crash da JVM (Java Virtual Machine)
+hs_err_pid*
+
+# ===================================================================
+# Arquivos de Sistema Operacional
+# ===================================================================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
