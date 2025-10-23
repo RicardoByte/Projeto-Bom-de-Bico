@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import pacotes.models.produtos.Produto;
-import pacotes.models.usuarios.Anunciante;
+import pacotes.models.usuario.Anunciante;
 
 public class Anuncio {
    

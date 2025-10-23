@@ -6,17 +6,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import pacotes.models.pagamento.MetodoPagamento;
+import pacotes.models.usuario.Cliente;
+import pacotes.models.produtos.Produto;
+
 public class Pedido {
     private String idPedido;
     private Date dataCriacao;
     private String status;
-    private List<ItemCarrinho> itensDoPedido;
+    private List<Produto> itensDoPedido;
     private float totalPedido;
     private MetodoPagamento metodoPagamento;
     private Cliente cliente;
     private int parcelas;
 
-    public Pedido(String idPedido, Cliente cliente, List<ItemCarrinho> itens, MetodoPagamento metodoPagamento) {
+    public Pedido(String idPedido, Cliente cliente, List<Produto> itens, MetodoPagamento metodoPagamento) {
         this.idPedido = idPedido;
         this.dataCriacao = new Date();
         this.status = "Pendente";
@@ -28,8 +32,8 @@ public class Pedido {
     }
     private void calcularTotal() {
         totalPedido = 0;
-        for (ItemCarrinho item : itensDoPedido) {
-            totalPedido += item.calcularSubtotal();
+        for (Produto item : itensDoPedido) {
+            totalPedido += item.calcularPrecoTotal();
         }
     }
 

@@ -1,4 +1,4 @@
- package pacotes.models.usuarios;
+ package pacotes.models.usuario;
   import java.time.LocalDateTime;
 
 public abstract class Usuario {

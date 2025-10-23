@@ -2,7 +2,7 @@ package pacotes.models.pagamento;
 import java.time.LocalDateTime;
 
 
-public class PagamentoCartao implements Pagamento {
+public class PagamentoCartao implements MetodoPagamento {
 
     private double valor;
     private LocalDateTime dataPagamento;

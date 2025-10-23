@@ -1,4 +1,4 @@
-package pacotes.models.usuarios;
+package pacotes.models.usuario;
 
 public class Anunciante extends Usuario {
     
