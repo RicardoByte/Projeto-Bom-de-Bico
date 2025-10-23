@@ -1,7 +1,7 @@
 package pacotes.models.pagamento;
 import java.time.LocalDateTime;
 
-public interface Pagamento {
+public interface MetodoPagamento {
     double getValor();
     LocalDateTime getDataPagamento();
     String getMetodo();

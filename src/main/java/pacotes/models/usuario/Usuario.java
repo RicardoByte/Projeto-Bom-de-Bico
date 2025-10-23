@@ -1,5 +1,7 @@
- package pacotes.models.usuarios;
-  import java.time.LocalDateTime;
+package pacotes.models.usuario;
+
+import java.time.LocalDateTime;
+                                            
 
 public abstract class Usuario {
     
