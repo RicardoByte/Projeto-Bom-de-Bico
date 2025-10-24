@@ -16,14 +16,34 @@ public class ConexaoDb {
         // Statement é usado para enviar comandos SQL ao banco
         Statement stmt = con.createStatement();
 
+         String sqlUsuario = """
+            CREATE TABLE IF NOT EXISTS usuario (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome   TEXT,
+                email  TEXT,
+                senha   TEXT,
+                telefone   TEXT,
+                endereco     TEXT,
+                ativo    INTEGER DEFAULT 1,
+                pfp_url TEXT,
+                data_cadastro TEXT
+            )
+        """;
+
+
+        String sqlCliente = """
+            CREATE TABLE IF NOT EXISTS cliente (
+                cpf     TEXT PRIMARY KEY NOT NULL,
+                usuario_id        INTEGER NOT NULL,
+                FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+            )
+        """;
+
         String sqlAnunciantes = """
             CREATE TABLE IF NOT EXISTS anunciantes (
-                id       INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome     TEXT    NOT NULL,
-                email    TEXT    NOT NULL UNIQUE,
-                cnpj     TEXT    NOT NULL UNIQUE,
-                telefone TEXT,
-                endereco TEXT,
+                usuario_id        INTEGER PRIMARY KEY NOT NULL,
+                cnpj     TEXT UNIQUE,
+                cpf      TEXT UNIQUE,
                 ativo    INTEGER DEFAULT 1
             )
         """;
@@ -49,6 +69,19 @@ public class ConexaoDb {
                 cliente_id INTEGER NOT NULL,
                 produto_id INTEGER NOT NULL,
                 quantidade INTEGER NOT NULL,
+                FOREIGN KEY (cliente_id) REFERENCES cliente(id) ON DELETE CASCADE,
+                FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
+            )
+        """;
+
+         String sqlCarrinhoProdutos = """
+            CREATE TABLE IF NOT EXISTS carrinho_produtos (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                carrinho_id     INTEGER NOT NULL,
+                produto_id INTEGER NOT NULL,
+                quantidade INTEGER NOT NULL,
+
+                FOREIGN KEY (carrinho_id) REFERENCES carrinho(id) ON DELETE CASCADE,
                 FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
             )
         """;
@@ -56,15 +89,10 @@ public class ConexaoDb {
         String sqlPedidos = """
             CREATE TABLE IF NOT EXISTS pedidos (
                 id             INTEGER PRIMARY KEY AUTOINCREMENT,
-                cliente_id     INTEGER NOT NULL,
-                anunciante_id  INTEGER NOT NULL,
-                produto_id     INTEGER NOT NULL,
-                quantidade     INTEGER NOT NULL,
-                valor_total    REAL    NOT NULL,
+                carrinho_id     INTEGER NOT NULL,
                 status         TEXT    NOT NULL,
                 data_pedido    TEXT    NOT NULL,
-                FOREIGN KEY (anunciante_id) REFERENCES anunciantes(id) ON DELETE CASCADE,
-                FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
+                FOREIGN KEY (carrinho_id) REFERENCES carrinho(id) ON DELETE CASCADE
             )
         """;
 
@@ -73,19 +101,24 @@ public class ConexaoDb {
                 id               INTEGER PRIMARY KEY AUTOINCREMENT,
                 pedido_id        INTEGER NOT NULL,
                 transportadora   TEXT,
-                codigo_rastreio  TEXT,
-                status_entrega   TEXT,
-                data_envio       TEXT,
+                codigo_rastreio  TEXT NOT NULL,
+                status_entrega   TEXT NOT NULL,
+                data_envio       TEXT NOT NULL,
                 data_entrega     TEXT,
                 FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE
             )
         """;
 
+        stmt.executeUpdate(sqlUsuario);
         stmt.executeUpdate(sqlAnunciantes);
+        stmt.executeUpdate(sqlCliente);
         stmt.executeUpdate(sqlProdutos);
         stmt.executeUpdate(sqlCarrinho);
+        stmt.executeUpdate(sqlCarrinhoProdutos);
         stmt.executeUpdate(sqlPedidos);
         stmt.executeUpdate(sqlLogistica);
+
+        stmt.close();
     }
 
     public static boolean executarSql(String sql) {

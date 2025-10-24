@@ -1,116 +1,183 @@
 package pacotes.repository;
 
-import pacotes.models.produtos.Produto;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import pacotes.models.produtos.Produto;  
 
 public class ProdutoDb {
 
-
-    public static boolean addProduto(Produto produto) {
-        try {
-            String sql = "INSERT INTO produto (anunciante_id, nome, descricao, categoria, preco, quantidade_estoque, imagem_url, ativo) " +
-                         "VALUES (" + produto.getAnuncianteId() + ", '" + produto.getNome() + "', '" + produto.getDescricao() + "', '" +
-                         produto.getCategoria() + "', " + produto.getPreco() + ", " + produto.getQuantidadeEstoque() + ", '" +
-                         produto.getImagemUrl() + "', " + produto.isAtivo() + ")";
+    public static boolean adicionarProduto(int anuncianteId, String nome, String descricao, 
+                                           String categoria, double preco, int quantidadeEstoque, String imagemUrl) {
+        String sql = "INSERT INTO produtos (anunciante_id, nome, descricao, categoria, preco, quantidade_estoque, imagem_url, ativo) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            return ConexaoDb.executarSql(sql);
-
-        } catch (Exception e) {
+            pstmt.setInt(1, anuncianteId);
+            pstmt.setString(2, nome);
+            pstmt.setString(3, descricao);
+            pstmt.setString(4, categoria);
+            pstmt.setDouble(5, preco);
+            pstmt.setInt(6, quantidadeEstoque);
+            pstmt.setString(7, imagemUrl);
+            
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
             System.out.println("Erro ao adicionar produto: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-   
-    public static boolean atualizarProduto(Produto produto) {
-        try {
-            String sql = "UPDATE produto SET " +
-                         "nome = '" + produto.getNome() + "', " +
-                         "descricao = '" + produto.getDescricao() + "', " +
-                         "categoria = '" + produto.getCategoria() + "', " +
-                         "preco = " + produto.getPreco() + ", " +
-                         "quantidade_estoque = " + produto.getQuantidadeEstoque() + ", " +
-                         "imagem_url = '" + produto.getImagemUrl() + "', " +
-                         "ativo = " + produto.isAtivo() +
-                         " WHERE id = " + produto.getId();
+    public static boolean atualizarProduto(int id, String nome, String descricao, 
+                                          String categoria, double preco, int quantidadeEstoque, String imagemUrl) {
+        String sql = "UPDATE produtos SET nome = ?, descricao = ?, categoria = ?, " +
+                     "preco = ?, quantidade_estoque = ?, imagem_url = ? WHERE id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            return ConexaoDb.executarSql(sql);
-
-        } catch (Exception e) {
+            pstmt.setString(1, nome);
+            pstmt.setString(2, descricao);
+            pstmt.setString(3, categoria);
+            pstmt.setDouble(4, preco);
+            pstmt.setInt(5, quantidadeEstoque);
+            pstmt.setString(6, imagemUrl);
+            pstmt.setInt(7, id);
+            
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
             System.out.println("Erro ao atualizar produto: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-   
-    public static boolean removerProduto(Long id) {
-        try {
-            String sql = "DELETE FROM produto WHERE id = " + id;
-            return ConexaoDb.executarSql(sql);
-
-        } catch (Exception e) {
-            System.out.println("Erro ao remover produto: " + e.getMessage());
+    public static boolean deletarProduto(int id) {
+        String sql = "DELETE FROM produtos WHERE id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar produto: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-   
-    public static Produto buscarProdutoPorId(Long id) {
-        try {
-            String sql = "SELECT * FROM produto WHERE id = " + id;
-            Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
-
-            if (rs != null && rs.next()) {
-                Produto p = new Produto();
-                p.setId(rs.getLong("id"));
-                p.setAnuncianteId(rs.getLong("anunciante_id"));
-                p.setNome(rs.getString("nome"));
-                p.setDescricao(rs.getString("descricao"));
-                p.setCategoria(rs.getString("categoria"));
-                p.setPreco(rs.getDouble("preco"));
-                p.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
-                p.setAtivo(rs.getBoolean("ativo"));
-                return p;
+    public static List<Produto> listarProdutos() {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT * FROM produtos WHERE ativo = 1";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Produto produto = new Produto(
+                    rs.getInt("id"),
+                    rs.getInt("anunciante_id"),
+                    rs.getString("nome"),
+                    rs.getString("descricao"),
+                    rs.getString("categoria"),
+                    rs.getDouble("preco"),
+                    rs.getInt("quantidade_estoque"),
+                    rs.getString("imagem_url"),
+                    rs.getInt("ativo")
+                );
+                produtos.add(produto);
             }
-            con.close();
-            return null;
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar produtos: " + e.getMessage());
+        }
+        
+        return produtos;
+    }
 
-        } catch (Exception e) {
+    public static Produto buscarProdutoPorId(int id) {
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return new Produto(
+                    rs.getInt("id"),
+                    rs.getInt("anunciante_id"),
+                    rs.getString("nome"),
+                    rs.getString("descricao"),
+                    rs.getString("categoria"),
+                    rs.getDouble("preco"),
+                    rs.getInt("quantidade_estoque"),
+                    rs.getString("imagem_url"),
+                    rs.getInt("ativo")
+                );
+            }
+            
+        } catch (SQLException e) {
             System.out.println("Erro ao buscar produto: " + e.getMessage());
         }
+        
         return null;
     }
 
-
-    public static List<Produto> listarProdutos() {
-        List<Produto> lista = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM produto";
-             Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
-
-            while (rs != null && rs.next()) {
-                Produto p = new Produto();
-                p.setId(rs.getLong("id"));
-                p.setAnuncianteId(rs.getLong("anunciante_id"));
-                p.setNome(rs.getString("nome"));
-                p.setDescricao(rs.getString("descricao"));
-                p.setCategoria(rs.getString("categoria"));
-                p.setPreco(rs.getDouble("preco"));
-                p.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
-                p.setAtivo(rs.getBoolean("ativo"));
-                lista.add(p);
+    public static List<Produto> listarProdutosPorAnunciante(int anuncianteId) {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT * FROM produtos WHERE anunciante_id = ? AND ativo = 1";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, anuncianteId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                Produto produto = new Produto(
+                    rs.getInt("id"),
+                    rs.getInt("anunciante_id"),
+                    rs.getString("nome"),
+                    rs.getString("descricao"),
+                    rs.getString("categoria"),
+                    rs.getDouble("preco"),
+                    rs.getInt("quantidade_estoque"),
+                    rs.getString("imagem_url"),
+                    rs.getInt("ativo")
+                );
+                produtos.add(produto);
             }
-
-            con.close();
-            return lista;
-
-        } catch (Exception e) {
-            System.out.println("Erro ao listar produtos: " + e.getMessage());
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar produtos por anunciante: " + e.getMessage());
         }
-        return lista;
+        
+        return produtos;
+    }
+
+    public static boolean desativarProduto(int id) {
+        String sql = "UPDATE produtos SET ativo = 0 WHERE id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao desativar produto: " + e.getMessage());
+            return false;
+        }
     }
 }

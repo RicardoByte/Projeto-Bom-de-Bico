@@ -1,136 +1,112 @@
-package pacotes.models.produtos;
+package pacotes.models.produtos ;
 
-import java.time.LocalDateTime;
-
-/**
- * Classe modelo que representa um produto anunciado na plataforma.
- * Versão aprimorada a nível de demonstração, mantendo compatibilidade com Double.
- */
 public class Produto {
-
-    private Long id;
-    private Long anuncianteId;
+    private int id;
+    private int anuncianteId;
     private String nome;
     private String descricao;
     private String categoria;
-    private Double preco;
-    private Integer quantidadeEstoque;
+    private double preco;
+    private int quantidadeEstoque;
     private String imagemUrl;
-    private boolean ativo;
-    private final LocalDateTime dataCadastro;
+    private int ativo;
 
-    // ======== CONSTRUTORES ========
-
-    public Produto() {
-        this.ativo = true;
-        this.quantidadeEstoque = 0;
-        this.dataCadastro = LocalDateTime.now();
-    }
-
-    public Produto(Long anuncianteId, String nome, String descricao,
-                   String categoria, Double preco, Integer quantidadeEstoque) {
-        this();
-        setAnuncianteId(anuncianteId);
-        setNome(nome);
-        setDescricao(descricao);
-        setCategoria(categoria);
-        setPreco(preco);
-        setQuantidadeEstoque(quantidadeEstoque);
-    }
-
-    // ======== MÉTODOS DE NEGÓCIO ========
-
-    public boolean temEstoque(int quantidade) {
-        return quantidadeEstoque >= quantidade;
-    }
-
-    public void adicionarEstoque(int quantidade) {
-        if (quantidade <= 0)
-            throw new IllegalArgumentException("A quantidade deve ser positiva.");
-        this.quantidadeEstoque += quantidade;
-    }
-
-    public void removerEstoque(int quantidade) {
-        if (quantidade <= 0)
-            throw new IllegalArgumentException("A quantidade deve ser positiva.");
-        if (quantidade > this.quantidadeEstoque)
-            throw new IllegalArgumentException("Estoque insuficiente.");
-        this.quantidadeEstoque -= quantidade;
-    }
-
-    public Double calcularPrecoTotal(int quantidade) {
-        if (quantidade <= 0)
-            throw new IllegalArgumentException("Quantidade deve ser positiva.");
-        return preco * quantidade;
-    }
-
-    public void ativar() {
-        this.ativo = true;
-    }
-
-    public void desativar() {
-        this.ativo = false;
-    }
-
-    // ======== GETTERS E SETTERS ========
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Long getAnuncianteId() { return anuncianteId; }
-    public void setAnuncianteId(Long anuncianteId) {
-        if (anuncianteId == null || anuncianteId <= 0)
-            throw new IllegalArgumentException("ID do anunciante inválido.");
+    public Produto(int id, int anuncianteId, String nome, String descricao, String categoria,
+                   double preco, int quantidadeEstoque, String imagemUrl, int ativo) {
+        this.id = id;
         this.anuncianteId = anuncianteId;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.categoria = categoria;
+        this.preco = preco;
+        this.quantidadeEstoque = quantidadeEstoque;
+        this.imagemUrl = imagemUrl;
+        this.ativo = ativo;
     }
 
-    public String getNome() { return nome; }
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public int getAnuncianteId() {
+        return anuncianteId;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public int getQuantidadeEstoque() {
+        return quantidadeEstoque;
+    }
+
+    public String getImagemUrl() {
+        return imagemUrl;
+    }
+
+    public int getAtivo() {
+        return ativo;
+    }
+
+    // Setters
     public void setNome(String nome) {
-        if (nome == null || nome.isBlank())
-            throw new IllegalArgumentException("Nome do produto não pode ser vazio.");
-        this.nome = nome.trim();
+        this.nome = nome;
     }
 
-    public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) {
-        this.descricao = (descricao == null) ? "" : descricao.trim();
+        this.descricao = descricao;
     }
 
-    public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) {
-        this.categoria = (categoria == null) ? "Sem categoria" : categoria.trim();
+        this.categoria = categoria;
     }
 
-    public Double getPreco() { return preco; }
-    public void setPreco(Double preco) {
-        if (preco == null || preco < 0)
-            throw new IllegalArgumentException("Preço deve ser maior ou igual a zero.");
+    public void setPreco(double preco) {
         this.preco = preco;
     }
 
-    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
-    public void setQuantidadeEstoque(Integer quantidadeEstoque) {
-        if (quantidadeEstoque == null || quantidadeEstoque < 0)
-            throw new IllegalArgumentException("Estoque não pode ser negativo.");
+    public void setQuantidadeEstoque(int quantidadeEstoque) {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
-    public String getImagemUrl() { return imagemUrl; }
-    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
-
-    public boolean isAtivo() { return ativo; }
-    public void setAtivo(boolean ativo) { this.ativo = ativo; }
-
-    public LocalDateTime getDataCadastro() { return dataCadastro; }
-
-    public String getInfo() {
-    return "Anunciante: " + anuncianteId + ", Descrição: " + descricao + 
-           ", Imagem: " + imagemUrl + ", Ativo: " + ativo + ", Data: " + dataCadastro;
+    public void setImagemUrl(String imagemUrl) {
+        this.imagemUrl = imagemUrl;
     }
-    
+
+    public void setAtivo(int ativo) {
+        this.ativo = ativo;
+    }
+
     @Override
     public String toString() {
-        return "Produto{id=%d, nome='%s', preco=R$%.2f, estoque=%d, categoria='%s'}"
-            .formatted(id, nome, preco, quantidadeEstoque, categoria);
+        return "Produto{" +
+                "id=" + id +
+                ", anuncianteId=" + anuncianteId +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", preco=" + preco +
+                ", quantidadeEstoque=" + quantidadeEstoque +
+                ", imagemUrl='" + imagemUrl + '\'' +
+                ", ativo=" + ativo +
+                '}';
+    }
+
+    public double calcularPrecoTotal(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calcularPrecoTotal'");
     }
 }

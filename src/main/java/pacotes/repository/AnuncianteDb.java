@@ -6,157 +6,218 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnuncianteDb {
-    
-    public static boolean cadastrar(String nome, String email, String cnpj, String telefone) {
-        try {
-            String sql = "INSERT INTO anunciante (nome, email, cnpj, telefone) " +
-                    "VALUES ('" + nome + "', '" + email + "', '" + cnpj + "', '" + telefone + "')";
+
+    public static boolean adicionarAnunciante(int usuarioId, String cnpj, String cpf) {
+        String sql = "INSERT INTO anunciantes (usuario_id, cnpj, cpf, ativo) VALUES (?, ?, ?, 1)";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            return ConexaoDb.executarSql(sql);
+            pstmt.setInt(1, usuarioId);
+            pstmt.setString(2, cnpj);
+            pstmt.setString(3, cpf);
             
-        } catch (Exception e) {
-            System.out.println("Erro ao cadastrar anunciante: " + e.getMessage());
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao adicionar anunciante: " + e.getMessage());
+            return false;
         }
-        return false;
     }
-    
-    public static boolean atualizar(Long id, String nome, String email, String telefone) {
-        try {
-            String sql = "UPDATE anunciante SET nome = '" + nome + "', " +
-                    "email = '" + email + "', telefone = '" + telefone + "' " +
-                    "WHERE id = " + id;
+
+    public static boolean atualizarAnunciante(int usuarioId, String cnpj, String cpf) {
+        String sql = "UPDATE anunciantes SET cnpj = ?, cpf = ? WHERE usuario_id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            return ConexaoDb.executarSql(sql);
+            pstmt.setString(1, cnpj);
+            pstmt.setString(2, cpf);
+            pstmt.setInt(3, usuarioId);
             
-        } catch (Exception e) {
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
             System.out.println("Erro ao atualizar anunciante: " + e.getMessage());
+            return false;
         }
-        return false;
     }
-    
-    public static boolean deletar(Long id) {
-        try {
-            String sql = "DELETE FROM anunciante WHERE id = " + id;
-            return ConexaoDb.executarSql(sql);
+
+    public static boolean deletarAnunciante(int usuarioId) {
+        String sql = "DELETE FROM anunciantes WHERE usuario_id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-        } catch (Exception e) {
+            pstmt.setInt(1, usuarioId);
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
             System.out.println("Erro ao deletar anunciante: " + e.getMessage());
+            return false;
         }
-        return false;
     }
-    
-    public static Anunciante buscarPorId(Long id) {
-        try {
-            String sql = "SELECT * FROM anunciante WHERE id = " + id;
+
+    public static List<Anunciante> listarAnunciantes() {
+        List<Anunciante> anunciantes = new ArrayList<>();
+        String sql = """
+            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
+                   u.ativo, a.cnpj, a.cpf
+            FROM anunciantes a
+            INNER JOIN usuario u ON a.usuario_id = u.id
+            WHERE a.ativo = 1
+        """;
+        
+        try (Connection conn = ConexaoDb.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             
-            Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
-            
-            Anunciante anunciante = null;
-            if (rs.next()) {
-                anunciante = new Anunciante(
-                    rs.getString("nome"),
-                    rs.getString("email"),
-                    rs.getString("senha"),
-                    rs.getString("telefone"),
-                    rs.getString("cnpj"),
-                    rs.getString("nome_fantasia")
-                );
-                anunciante.setId(rs.getLong("id"));
-                anunciante.setDescricao(rs.getString("descricao"));
-                anunciante.setAvaliacaoMedia(rs.getDouble("avaliacao_media"));
-            }
-            
-            con.close();
-            return anunciante;
-            
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar anunciante: " + e.getMessage());
-        }
-        return null;
-    }
-    
-    public static List<Anunciante> listarTodos() {
-        try {
-            String sql = "SELECT * FROM anunciante ORDER BY nome";
-            
-            Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
-            
-            List<Anunciante> anunciantes = new ArrayList<>();
             while (rs.next()) {
                 Anunciante anunciante = new Anunciante(
+                    rs.getInt("usuario_id"),
                     rs.getString("nome"),
                     rs.getString("email"),
                     rs.getString("senha"),
                     rs.getString("telefone"),
+                    rs.getString("endereco"),
+                    rs.getInt("ativo"),
                     rs.getString("cnpj"),
-                    rs.getString("nome_fantasia")
+                    rs.getString("cpf")
                 );
-                anunciante.setId(rs.getLong("id"));
-                anunciante.setDescricao(rs.getString("descricao"));
-                anunciante.setAvaliacaoMedia(rs.getDouble("avaliacao_media"));
                 anunciantes.add(anunciante);
             }
             
-            con.close();
-            return anunciantes;
-            
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Erro ao listar anunciantes: " + e.getMessage());
         }
-        return null;
+        
+        return anunciantes;
     }
-    
-    public static Anunciante buscarPorEmail(String email) {
-        try {
-            String sql = "SELECT * FROM anunciante WHERE email = '" + email + "'";
+
+    public static Anunciante buscarAnunciantePorId(int usuarioId) {
+        String sql = """
+            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
+                   u.ativo, a.cnpj, a.cpf
+            FROM anunciantes a
+            INNER JOIN usuario u ON a.usuario_id = u.id
+            WHERE a.usuario_id = ?
+        """;
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
+            pstmt.setInt(1, usuarioId);
+            ResultSet rs = pstmt.executeQuery();
             
-            Anunciante anunciante = null;
             if (rs.next()) {
-                anunciante = new Anunciante(
+                return new Anunciante(
+                    rs.getInt("usuario_id"),
                     rs.getString("nome"),
                     rs.getString("email"),
                     rs.getString("senha"),
                     rs.getString("telefone"),
+                    rs.getString("endereco"),
+                    rs.getInt("ativo"),
                     rs.getString("cnpj"),
-                    rs.getString("nome_fantasia")
+                    rs.getString("cpf")
                 );
-                anunciante.setId(rs.getLong("id"));
-                anunciante.setDescricao(rs.getString("descricao"));
-                anunciante.setAvaliacaoMedia(rs.getDouble("avaliacao_media"));
             }
             
-            con.close();
-            return anunciante;
-            
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar anunciante por email: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar anunciante: " + e.getMessage());
         }
+        
         return null;
     }
-    
-    public static Integer contarAnunciantes() {
-        try {
-            String sql = "SELECT COUNT(*) as total FROM anunciante";
+
+    public static Anunciante buscarAnunciantePorCnpj(String cnpj) {
+        String sql = """
+            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
+                   u.ativo, a.cnpj, a.cpf
+            FROM anunciantes a
+            INNER JOIN usuario u ON a.usuario_id = u.id
+            WHERE a.cnpj = ?
+        """;
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            Connection con = ConexaoDb.conectar();
-            ResultSet rs = ConexaoDb.executarQuery(sql, con);
+            pstmt.setString(1, cnpj);
+            ResultSet rs = pstmt.executeQuery();
             
-            Integer total = 0;
             if (rs.next()) {
-                total = rs.getInt("total");
+                return new Anunciante(
+                    rs.getInt("usuario_id"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    rs.getString("senha"),
+                    rs.getString("telefone"),
+                    rs.getString("endereco"),
+                    rs.getInt("ativo"),
+                    rs.getString("cnpj"),
+                    rs.getString("cpf")
+                );
             }
             
-            con.close();
-            return total;
-            
-        } catch (Exception e) {
-            System.out.println("Erro ao contar anunciantes: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar anunciante por CNPJ: " + e.getMessage());
         }
-        return 0;
+        
+        return null;
+    }
+
+    public static Anunciante buscarAnunciantePorCpf(String cpf) {
+        String sql = """
+            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
+                   u.ativo, a.cnpj, a.cpf
+            FROM anunciantes a
+            INNER JOIN usuario u ON a.usuario_id = u.id
+            WHERE a.cpf = ?
+        """;
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, cpf);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return new Anunciante(
+                    rs.getInt("usuario_id"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    rs.getString("senha"),
+                    rs.getString("telefone"),
+                    rs.getString("endereco"),
+                    rs.getInt("ativo"),
+                    rs.getString("cnpj"),
+                    rs.getString("cpf")
+                );
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar anunciante por CPF: " + e.getMessage());
+        }
+        
+        return null;
+    }
+
+    public static boolean desativarAnunciante(int usuarioId) {
+        String sql = "UPDATE anunciantes SET ativo = 0 WHERE usuario_id = ?";
+        
+        try (Connection conn = ConexaoDb.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, usuarioId);
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao desativar anunciante: " + e.getMessage());
+            return false;
+        }
     }
 }
