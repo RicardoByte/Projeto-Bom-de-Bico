@@ -2,7 +2,7 @@ package pacotes;
 
 import javax.swing.SwingUtilities;
 
-import pacotes.view.BomDeBicoSwing;
+import pacotes.view.PesquisaSwingSimples;
 
 /**
  * Hello world!
@@ -17,7 +17,7 @@ public final class App {
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new BomDeBicoSwing().setVisible(true);
+            new PesquisaSwingSimples().setVisible(true);
         });
     }
 }

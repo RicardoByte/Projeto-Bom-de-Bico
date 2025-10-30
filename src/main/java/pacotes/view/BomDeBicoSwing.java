@@ -102,10 +102,9 @@ public class BomDeBicoSwing extends JFrame {
         heroPanel.setBackground(new Color(30, 30, 30)); // Fundo escuro
         heroPanel.setPreferredSize(new Dimension(1200, 350));
 
-        // Placeholder para a imagem da Arara
-        JLabel heroImage = new JLabel("[Imagem de uma Arara Azul]");
-        heroImage.setForeground(Color.WHITE);
-        heroImage.setFont(new Font("Arial", Font.ITALIC, 20));
+        // Carrega a imagem do banner
+        ImageIcon bannerIcon = new ImageIcon("src/main/resources/images/arara-banner.png");
+        JLabel heroImage = new JLabel(bannerIcon);
         heroImage.setHorizontalAlignment(SwingConstants.CENTER);
         heroPanel.add(heroImage, BorderLayout.CENTER);
 
