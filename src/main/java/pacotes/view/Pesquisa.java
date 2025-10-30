@@ -3,6 +3,7 @@ package pacotes.view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import pacotes.view.Home;
 
 public class Pesquisa extends JFrame {
 
@@ -22,7 +23,15 @@ public class Pesquisa extends JFrame {
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(10, 0));
         
-        headerPanel.add(new JLabel("Bom de Bico"), BorderLayout.WEST);
+        JButton homeButton = new JButton("Bom de Bico");
+        homeButton.addActionListener(e -> {
+            this.getContentPane().removeAll();
+            this.add(new Home());
+            this.revalidate();
+            this.repaint();  
+        });
+
+        headerPanel.add(homeButton, BorderLayout.WEST);
         headerPanel.add(new JTextField("Buscar por produto ou marca..."), BorderLayout.CENTER);
 
         JPanel iconPanel = new JPanel(new FlowLayout());
