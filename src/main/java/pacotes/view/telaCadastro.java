@@ -1,3 +1,5 @@
+package pacotes.view;
+
 import javax.swing.*;
 
 public class telaCadastro {
