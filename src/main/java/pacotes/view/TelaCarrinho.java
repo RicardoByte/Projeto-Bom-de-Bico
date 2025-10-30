@@ -220,11 +220,11 @@ public class TelaCarrinho extends JFrame {
     }
 
     private void acaoFinalizarCompra(ActionEvent e) {
-     
+       /*     
         if (itensDoCarrinho.isEmpty()) {
             exibirAviso("O carrinho está vazio!");
             return;
-        }
+        }*/
         double total = calcularTotalDouble();
         ArrayList<Produto> produtosParaCheckout = extrairProdutosDoCarrinho();
         painelCheckout = new PainelCheckout(produtosParaCheckout, total, cardLayout, painelPrincipal);
