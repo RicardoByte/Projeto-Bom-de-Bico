@@ -1,6 +1,6 @@
 package pacotes;
 
-import pacotes.view.BomDeBicoHome;
+import pacotes.view.TelaInicial;
 import javax.swing.*;
 
 public final class App {
@@ -8,7 +8,7 @@ public final class App {
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            BomDeBicoHome home = new BomDeBicoHome();
+            TelaInicial home = new TelaInicial();
             home.setVisible(true);
         });
     }
