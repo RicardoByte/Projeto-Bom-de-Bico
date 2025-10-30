@@ -163,11 +163,11 @@ public class BomDeBicoSwing extends JFrame {
         JPanel gridPanel = new JPanel(new GridLayout(1, 5, 20, 20)); // 1 linha, 5 colunas, espaçamento
         gridPanel.setBackground(Color.WHITE);
 
-        gridPanel.add(createCategoryItem("Rações", "As melhores marcas"));
-        gridPanel.add(createCategoryItem("Gaiolas", "Conforto e segurança"));
-        gridPanel.add(createCategoryItem("Brinquedos", "Diversão garantida"));
-        gridPanel.add(createCategoryItem("Saúde", "Vitaminas e cuidados"));
-        gridPanel.add(createCategoryItem("Acessórios", "Tudo para o bem-estar"));
+        gridPanel.add(createCategoryItem("Rações", "As melhores marcas", "src/main/resources/images/racoes.png"));
+        gridPanel.add(createCategoryItem("Gaiolas", "Conforto e segurança", "src/main/resources/images/gaiolas.jpg"));
+        gridPanel.add(createCategoryItem("Brinquedos", "Diversão garantida", "src/main/resources/images/brinquedos.jpg"));
+        gridPanel.add(createCategoryItem("Saúde", "Vitaminas e cuidados", "src/main/resources/images/saude.jpg"));
+        gridPanel.add(createCategoryItem("Acessórios", "Tudo para o bem-estar", "src/main/resources/images/acessorios.jpg"));
 
         sectionPanel.add(gridPanel);
         return sectionPanel;
@@ -177,22 +177,26 @@ public class BomDeBicoSwing extends JFrame {
      * Helper para criar um item de categoria (placeholder)
      * NOTA: Imagens circulares exigiriam custom painting (Graphics.fillOval)
      */
-    private JPanel createCategoryItem(String name, String description) {
+    private JPanel createCategoryItem(String name, String description, String imagePath) {
         JPanel itemPanel = new JPanel();
         itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
         itemPanel.setBackground(Color.WHITE);
         itemPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Placeholder para a imagem circular
-        JLabel imgPlaceholder = new JLabel("[Imagem " + name + "]");
-        imgPlaceholder.setFont(new Font("Arial", Font.ITALIC, 12));
-        imgPlaceholder.setPreferredSize(new Dimension(150, 150));
-        imgPlaceholder.setMinimumSize(new Dimension(150, 150));
-        imgPlaceholder.setMaximumSize(new Dimension(150, 150));
-        imgPlaceholder.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        imgPlaceholder.setHorizontalAlignment(SwingConstants.CENTER);
-        imgPlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
-        itemPanel.add(imgPlaceholder);
+        // Carrega a imagem
+        ImageIcon originalIcon = new ImageIcon(imagePath);
+        Image originalImage = originalIcon.getImage();
+        // Redimensiona a imagem para se ajustar ao label
+        Image resizedImage = originalImage.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        ImageIcon imageIcon = new ImageIcon(resizedImage);
+
+        JLabel imageLabel = new JLabel(imageIcon);
+        imageLabel.setPreferredSize(new Dimension(150, 150));
+        imageLabel.setMinimumSize(new Dimension(150, 150));
+        imageLabel.setMaximumSize(new Dimension(150, 150));
+        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        itemPanel.add(imageLabel);
         
         itemPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
