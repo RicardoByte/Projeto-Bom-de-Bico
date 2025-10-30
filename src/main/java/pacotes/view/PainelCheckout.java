@@ -8,20 +8,16 @@ import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.util.ArrayList;
 
-// Imports dos models (assumindo que existem)
 import pacotes.models.pagamento.MetodoPagamento;
 import pacotes.models.pagamento.PagamentoBoleto;
 import pacotes.models.pagamento.PagamentoCartao;
 import pacotes.models.pagamento.PagamentoPix;
 import pacotes.models.produtos.Produto;
 
-/**
- * Painel para finalização da compra (Checkout).
- * Este painel é exibido dentro da TelaCarrinho.
- */
+
 public class PainelCheckout extends JPanel {
     
-    // Componentes
+  
     private JTextField txtEndereco;
     private JTextField txtNome;
     private JTextField txtEmail;
@@ -32,7 +28,7 @@ public class PainelCheckout extends JPanel {
     private JButton btnSalvar;
     private JLabel jlTotal;
 
-    // Fontes e Cores
+   
     private final Font FONTE_H1 = new Font("Arial", Font.BOLD, 40);
     private final Font FONTE_H3 = new Font("Arial", Font.BOLD, 18);
     private final Font FONTE_CORPO = new Font("Roboto", Font.PLAIN, 12);
@@ -41,17 +37,15 @@ public class PainelCheckout extends JPanel {
     private final Color COR_BOTAO_PRIMARIO = new Color(0xF26E22);
     private final Color COR_PRECO_OFERTA = new Color(0xFF0033);
 
-    // Variáveis de estado
+    
     private double totalBase;
     private double totalComJuros;
     
-    // Variáveis para navegação (CardLayout)
+    
     private CardLayout cardLayoutPai;
     private JPanel painelPai;
 
-    /**
-     * Construtor do Painel de Checkout.
-     */
+    
     public PainelCheckout(ArrayList<Produto> carrinho, double total, CardLayout layout, JPanel painelPai) {
         this.totalBase = total;
         this.totalComJuros = total;
@@ -91,7 +85,7 @@ public class PainelCheckout extends JPanel {
 
         painelInfo.add(new JLabel("Telefone:"));
         txtTelefone = new JTextField();
-        aplicarFiltroNumerico(txtTelefone); // Filtro para aceitar apenas números
+        aplicarFiltroNumerico(txtTelefone); 
         painelInfo.add(txtTelefone);
 
         painelInfo.add(new JLabel("Endereço:"));
@@ -115,7 +109,7 @@ public class PainelCheckout extends JPanel {
 
         painel.add(painelInfo, BorderLayout.CENTER);
 
-        // --- Botões de Ação ---
+        
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         painelBotoes.setBackground(COR_BACKGROUND);
         btnSalvar = criarBotaoPrimario("Finalizar Compra");
@@ -129,10 +123,10 @@ public class PainelCheckout extends JPanel {
         comboParcelas.addActionListener(e -> atualizarTotalComJuros());
         btnSalvar.addActionListener(e -> finalizarCompra(carrinho));
         
-        // Botão Cancelar agora usa o CardLayout para voltar
+        
         btnCancelar.addActionListener(e -> {
             if (cardLayoutPai != null && painelPai != null) {
-                // Volta para a tela de lista do carrinho
+                
                 cardLayoutPai.show(painelPai, "CARRINHO");
             }
         });
@@ -190,7 +184,6 @@ public class PainelCheckout extends JPanel {
         });
     }
 
-    // --- Métodos de Lógica ---
 
     private void atualizarOpcoesPagamento() {
         String metodo = (String) comboPagamentos.getSelectedItem();
@@ -263,14 +256,13 @@ public class PainelCheckout extends JPanel {
         if (pagamento != null && pagamento.processarPagamento()) {
             JOptionPane.showMessageDialog(this, "Compra finalizada com " + pagamento.getMetodo() + "!");
             
-            // Limpa o carrinho estático
+            
             TelaCarrinho.limparCarrinhoEstatico();
             
-            // Volta para a tela do carrinho (que agora estará vazia)
+            
             if (cardLayoutPai != null && painelPai != null) {
                 cardLayoutPai.show(painelPai, "CARRINHO");
                 
-                // Encontra o JFrame pai (TelaCarrinho) e o fecha
                 Container topLevelContainer = this.getTopLevelAncestor();
                 if (topLevelContainer instanceof JFrame) {
                     ((JFrame) topLevelContainer).dispose();
@@ -281,9 +273,7 @@ public class PainelCheckout extends JPanel {
         }
     }
 
-    /**
-     * Método main para testar o PAINEL isoladamente.
-     */
+    
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

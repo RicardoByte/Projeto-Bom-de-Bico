@@ -1,30 +1,22 @@
 package pacotes.view;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import pacotes.models.produtos.Produto;
 import pacotes.models.pedido.ItemCarrinho;
 
-/**
- * Tela de Carrinho de Compras.
- * Esta classe agora é um JFrame que gerencia 
- * a lista de itens e o painel de checkout usando CardLayout.
- */
 public class TelaCarrinho extends JFrame {
 
-    private static final int LARGURA_JANELA = 800;
-    private static final int ALTURA_JANELA = 600;
+    private static final int LARGURA_JANELA = 1024;
+    private static final int ALTURA_JANELA = 768;
     private static final int ESPACAMENTO = 10;
-
-    // --- GERENCIAMENTO DE ESTADO (CARRINHO) ---
-    // Lista estática para ser acessível por outras telas (ex: TelaPesquisa)
     private static List<ItemCarrinho> itensDoCarrinho = new ArrayList<>();
-
-    // Componentes da interface
     private JTable tabelaCarrinho;
     private DefaultTableModel modeloTabela;
     private JLabel lblTotal;
@@ -33,103 +25,88 @@ public class TelaCarrinho extends JFrame {
     private JButton btnContinuar;
     private JButton btnRemover;
     private JButton btnLimpar;
-
-    // Componentes do CardLayout
     private CardLayout cardLayout;
-    private JPanel painelPrincipal; // Painel que contém os cards
-    private PainelCheckout painelCheckout; // O painel de checkout
+    private JPanel painelPrincipal;
+    private PainelCheckout painelCheckout;
+
 
     public TelaCarrinho() {
         inicializarJanela();
         inicializarComponentes();
-        montarInterface(); // Monta a estrutura com CardLayout
+        montarInterface();
         configurarEventos();
-        
-        // Carrega os itens da lista estática na tabela
         atualizarTabela();
     }
 
-    /**
-     * Configura as propriedades básicas da janela
-     */
     private void inicializarJanela() {
         setTitle("Bom de Bico - Carrinho de Compras");
-        // DISPOSE_ON_CLOSE: Fecha apenas esta janela
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(LARGURA_JANELA, ALTURA_JANELA);
         setLocationRelativeTo(null);
-        
-        // Layout principal da Janela (para o CardLayout)
+        setLayout(new BorderLayout(0, 10));
+    }
+    
+    private void montarInterface() {
+        add(criarPainelCabecalhoPadrao(), BorderLayout.NORTH);
+        add(criarPainelRodapePadrao(), BorderLayout.SOUTH);
+
         cardLayout = new CardLayout();
         painelPrincipal = new JPanel(cardLayout);
-        add(painelPrincipal);
+        
+        JPanel painelListaCarrinho = new JPanel(new BorderLayout(ESPACAMENTO, ESPACAMENTO));
+        painelListaCarrinho.setBorder(new EmptyBorder(20, 20, 20, 20));
+        painelListaCarrinho.add(criarPainelTopo(), BorderLayout.NORTH);
+        painelListaCarrinho.add(criarPainelTabela(), BorderLayout.CENTER);
+        painelListaCarrinho.add(criarPainelRodapeBotoes(), BorderLayout.SOUTH);
+
+        painelCheckout = new PainelCheckout(new ArrayList<>(), 0.0, cardLayout, painelPrincipal); 
+
+        painelPrincipal.add(painelListaCarrinho, "CARRINHO");
+        painelPrincipal.add(painelCheckout, "CHECKOUT");
+        
+        add(painelPrincipal, BorderLayout.CENTER);
+        cardLayout.show(painelPrincipal, "CARRINHO");
     }
 
-    /**
-     * Instancia todos os componentes (separados do layout)
-     */
     private void inicializarComponentes() {
         String[] colunas = {"ID", "Produto", "Preço Unit.", "Quantidade", "Subtotal"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3; // Apenas quantidade é editável
-            }
+            public boolean isCellEditable(int row, int column) { return column == 3; }
         };
-
         tabelaCarrinho = new JTable(modeloTabela);
         tabelaCarrinho.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabelaCarrinho.setRowHeight(30);
-
         lblQuantidadeItens = new JLabel("Itens no carrinho: 0");
         lblTotal = new JLabel("Total: R$ 0,00");
-
+        lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
         btnRemover = new JButton("Remover Item");
         btnLimpar = new JButton("Limpar Carrinho");
         btnContinuar = new JButton("Continuar Comprando");
         btnFinalizar = new JButton("Finalizar Compra");
     }
-
-    /**
-     * Monta a estrutura da interface com CardLayout
-     */
-    private void montarInterface() {
-        // 1. Criar o Painel da Lista do Carrinho
-        JPanel painelListaCarrinho = new JPanel(new BorderLayout(ESPACAMENTO, ESPACAMENTO));
-        painelListaCarrinho.add(criarPainelTopo(), BorderLayout.NORTH);
-        painelListaCarrinho.add(criarPainelTabela(), BorderLayout.CENTER);
-        painelListaCarrinho.add(criarPainelRodape(), BorderLayout.SOUTH);
-
-        // 2. Criar o Painel de Checkout (inicialmente)
-        // Passamos o CardLayout e o painelPai para o checkout poder "voltar"
-        painelCheckout = new PainelCheckout(new ArrayList<>(), 0.0, cardLayout, painelPrincipal);
-
-        // 3. Adicionar os painéis ao CardLayout
-        painelPrincipal.add(painelListaCarrinho, "CARRINHO");
-        painelPrincipal.add(painelCheckout, "CHECKOUT");
-        
-        // Inicia mostrando o carrinho
-        cardLayout.show(painelPrincipal, "CARRINHO");
-    }
-
-    // --- Métodos de montagem da tela de Lista (antigos) ---
+    
+    
+    
     private JPanel criarPainelTopo() {
+       
         JPanel painel = new JPanel(new BorderLayout());
-        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        painel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         JLabel lblTitulo = new JLabel("Meu Carrinho de Compras");
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         painel.add(lblTitulo, BorderLayout.WEST);
         painel.add(lblQuantidadeItens, BorderLayout.EAST);
         return painel;
     }
 
     private JPanel criarPainelTabela() {
+       
         JPanel painel = new JPanel(new BorderLayout(ESPACAMENTO, ESPACAMENTO));
-        painel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(tabelaCarrinho);
         painel.add(scrollPane, BorderLayout.CENTER);
-
         JPanel painelBotoesLateral = new JPanel();
         painelBotoesLateral.setLayout(new BoxLayout(painelBotoesLateral, BoxLayout.Y_AXIS));
+        painelBotoesLateral.setBorder(new EmptyBorder(0, 10, 0, 0));
         btnRemover.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnLimpar.setAlignmentX(Component.CENTER_ALIGNMENT);
         painelBotoesLateral.add(btnRemover);
@@ -139,9 +116,10 @@ public class TelaCarrinho extends JFrame {
         return painel;
     }
 
-    private JPanel criarPainelRodape() {
+    private JPanel criarPainelRodapeBotoes() {
+       
         JPanel painel = new JPanel(new BorderLayout(ESPACAMENTO, ESPACAMENTO));
-        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        painel.setBorder(new EmptyBorder(10, 0, 0, 0));
         JPanel painelTotal = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         painelTotal.add(lblTotal);
         painel.add(painelTotal, BorderLayout.NORTH);
@@ -151,27 +129,69 @@ public class TelaCarrinho extends JFrame {
         painel.add(painelBotoes, BorderLayout.SOUTH);
         return painel;
     }
-    // --- Fim dos métodos de montagem ---
 
-    /**
-     * Configura os eventos dos componentes
-     */
+    
+    
+    private JPanel criarPainelCabecalhoPadrao() {
+        JPanel painelCabecalho = new JPanel(new BorderLayout(20, 0));
+        painelCabecalho.setBorder(new EmptyBorder(10, 20, 10, 20));
+        painelCabecalho.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+
+       
+        JButton homeButton = new JButton("Bom de Bico");
+        homeButton.setFont(new Font("Arial", Font.BOLD, 20));
+        homeButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
+        
+        homeButton.addActionListener(new ActionListener() { 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame frameAtual = (JFrame) SwingUtilities.getWindowAncestor(homeButton);
+                
+                frameAtual.getContentPane().removeAll();
+                frameAtual.add(new TelaInicial()); 
+                frameAtual.revalidate();
+                frameAtual.repaint();
+                frameAtual.setTitle("Bom de Bico - Home");
+            }
+        });
+        painelCabecalho.add(homeButton, BorderLayout.WEST);
+      
+
+        JPanel painelUsuario = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        
+        JButton btnPesquisa = new JButton("Pesquisa");
+        btnPesquisa.addActionListener(this::acaoContinuarComprando);
+        painelUsuario.add(btnPesquisa);
+        
+        JButton btnPerfil = new JButton("Meu Perfil");
+        btnPerfil.addActionListener(this::abrirTelaPerfil);
+        painelUsuario.add(btnPerfil);
+        
+        painelCabecalho.add(painelUsuario, BorderLayout.EAST);
+        return painelCabecalho;
+    }
+    
+    private JPanel criarPainelRodapePadrao() {
+        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 10));
+        painelRodape.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
+        painelRodape.add(new JLabel("© 2024 Bom de Bico"));
+        return painelRodape;
+    }
+
+
     private void configurarEventos() {
+        
         btnRemover.addActionListener(this::acaoRemoverItem);
         btnLimpar.addActionListener(this::acaoLimparCarrinho);
         btnContinuar.addActionListener(this::acaoContinuarComprando);
         btnFinalizar.addActionListener(this::acaoFinalizarCompra);
-
         modeloTabela.addTableModelListener(e -> {
-            if (e.getColumn() == 3) { // Coluna de quantidade
-                acaoAtualizarQuantidade(e.getFirstRow());
-            }
+            if (e.getColumn() == 3) { acaoAtualizarQuantidade(e.getFirstRow()); }
         });
     }
 
-    // --- Métodos de Ação ---
-
     private void acaoRemoverItem(ActionEvent e) {
+       
         int linhaSelecionada = tabelaCarrinho.getSelectedRow();
         if (linhaSelecionada < 0) {
             exibirAviso("Selecione um item para remover!");
@@ -182,6 +202,7 @@ public class TelaCarrinho extends JFrame {
     }
 
     private void acaoLimparCarrinho(ActionEvent e) {
+       
         if (itensDoCarrinho.isEmpty()) return;
         int resposta = JOptionPane.showConfirmDialog(this, "Limpar todo o carrinho?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (resposta == JOptionPane.YES_OPTION) {
@@ -191,123 +212,106 @@ public class TelaCarrinho extends JFrame {
     }
 
     private void acaoContinuarComprando(ActionEvent e) {
-        // Abre a tela de pesquisa
+        
         TelaPesquisa telaPesquisa = new TelaPesquisa();
         telaPesquisa.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         telaPesquisa.setVisible(true);
-        // Fecha a tela do carrinho
         dispose();
     }
 
-    /**
-     * Ação de Finalizar Compra: AGORA MUDA PARA O CARD DE CHECKOUT
-     */
     private void acaoFinalizarCompra(ActionEvent e) {
+     
         if (itensDoCarrinho.isEmpty()) {
             exibirAviso("O carrinho está vazio!");
             return;
         }
-
-        // 1. Calcular o total e extrair a lista de produtos
         double total = calcularTotalDouble();
         ArrayList<Produto> produtosParaCheckout = extrairProdutosDoCarrinho();
-
-        // 2. Criar um NOVO painel de checkout com os dados atualizados
-        //    (Passando o layout e o painel pai para ele poder voltar)
         painelCheckout = new PainelCheckout(produtosParaCheckout, total, cardLayout, painelPrincipal);
-        
-        // 3. Remover o painel de checkout antigo e adicionar o novo
-        painelPrincipal.remove(1); // Remove o componente na posição 1 (o checkout antigo)
-        painelPrincipal.add(painelCheckout, "CHECKOUT"); // Adiciona o novo
-
-        // 4. Mudar para a tela de checkout
+        painelPrincipal.remove(1);
+        painelPrincipal.add(painelCheckout, "CHECKOUT");
         cardLayout.show(painelPrincipal, "CHECKOUT");
     }
 
     private void acaoAtualizarQuantidade(int linha) {
+        
         try {
             int novaQuantidade = (Integer) modeloTabela.getValueAt(linha, 3);
             ItemCarrinho item = itensDoCarrinho.get(linha);
-
             if (novaQuantidade <= 0) {
                 exibirAviso("Quantidade deve ser maior que zero!");
-                atualizarTabela(); // Reverte para o valor antigo
+                atualizarTabela(); 
                 return;
             }
             if (novaQuantidade > item.getProduto().getQuantidadeEstoque()) {
                 exibirAviso("Quantidade excede o estoque disponível!");
-                atualizarTabela(); // Reverte
+                atualizarTabela(); 
                 return;
             }
             item.setQuantidade(novaQuantidade);
-            atualizarTabela(); // Atualiza subtotais e total
-
+            atualizarTabela();
         } catch (Exception e) {
             exibirErro("Erro ao atualizar quantidade.");
             atualizarTabela();
         }
     }
-
-    // --- Métodos de Gerenciamento Estático do Carrinho ---
-
-    /**
-     * Método estático para adicionar produtos de outras telas.
-     */
+    
+    private void abrirTelaPerfil(ActionEvent e) {
+       
+        TelaPerfil telaPerfil = new TelaPerfil();
+        telaPerfil.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        telaPerfil.setVisible(true);
+    }
+    
+   
     public static void adicionarProdutoAoCarrinho(Produto produto, int quantidade) {
+        
         if (produto == null || quantidade <= 0) return;
         if (quantidade > produto.getQuantidadeEstoque()) {
-            // Idealmente, mostraria um JOptionPane, mas métodos estáticos não devem
-            // criar GUI. Vamos apenas impedir a adição.
             System.err.println("Estoque insuficiente!");
             return;
         }
-
-        // Verifica se o produto já está no carrinho
         for (ItemCarrinho item : itensDoCarrinho) {
             if (item.getProduto().getId() == produto.getId()) {
                 int novaQuantidade = item.getQuantidade() + quantidade;
                 if (novaQuantidade > produto.getQuantidadeEstoque()) {
-                    item.setQuantidade(produto.getQuantidadeEstoque()); // Limita ao estoque
+                    item.setQuantidade(produto.getQuantidadeEstoque());
                 } else {
                     item.setQuantidade(novaQuantidade);
                 }
-                return; // Encontrou e atualizou
+                return;
             }
         }
-        // Se saiu do loop, é um produto novo
         itensDoCarrinho.add(new ItemCarrinho(produto, quantidade));
     }
     
-    // Limpa o carrinho (chamado pelo checkout após sucesso)
     public static void limparCarrinhoEstatico() {
         itensDoCarrinho.clear();
     }
 
-
-    // --- Métodos Utilitários Internos ---
-
+    
     private void atualizarTabela() {
-        modeloTabela.setRowCount(0); // Limpa a tabela
-        for (ItemCarrinho item : itensDoCarrinho) { // Lê da lista estática
+        
+        modeloTabela.setRowCount(0);
+        for (ItemCarrinho item : itensDoCarrinho) {
             Produto p = item.getProduto();
             double subtotal = p.getPreco() * item.getQuantidade();
             modeloTabela.addRow(new Object[]{
-                p.getId(),
-                p.getNome(),
-                String.format("R$ %.2f", p.getPreco()),
-                item.getQuantidade(),
-                String.format("R$ %.2f", subtotal)
+                p.getId(), p.getNome(), String.format("R$ %.2f", p.getPreco()),
+                item.getQuantidade(), String.format("R$ %.2f", subtotal)
             });
         }
         atualizarTotais();
     }
 
     private void atualizarTotais() {
+      
         lblQuantidadeItens.setText("Itens no carrinho: " + itensDoCarrinho.size());
         lblTotal.setText(String.format("Total: R$ %.2f", calcularTotalDouble()));
     }
 
     private double calcularTotalDouble() {
+      
         double valorTotal = 0.0;
         for (ItemCarrinho item : itensDoCarrinho) {
             valorTotal += item.getProduto().getPreco() * item.getQuantidade();
@@ -316,6 +320,7 @@ public class TelaCarrinho extends JFrame {
     }
     
     private ArrayList<Produto> extrairProdutosDoCarrinho() {
+      
         ArrayList<Produto> lista = new ArrayList<>();
         for (ItemCarrinho item : itensDoCarrinho) {
             lista.add(item.getProduto());
@@ -329,19 +334,5 @@ public class TelaCarrinho extends JFrame {
 
     private void exibirAviso(String mensagem) {
         JOptionPane.showMessageDialog(this, mensagem, "Aviso", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /**
-     * Método main para executar a tela (teste)
-     */
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        SwingUtilities.invokeLater(() -> {
-            new TelaCarrinho().setVisible(true);
-        });
     }
 }

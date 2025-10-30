@@ -2,298 +2,213 @@ package pacotes.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.MouseEvent; 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 
-/**
- * Tela principal "Home" da aplicação.
- */
-public class TelaInicial extends JFrame {
 
-    // Define fontes padrão para hierarquia visual
-    private static final Font FONTE_TITULO = new Font("Arial", Font.BOLD, 22);
-    private static final Font FONTE_SUBTITULO = new Font("Arial", Font.BOLD, 16);
-    private static final Font FONTE_PADRAO = new Font("Arial", Font.PLAIN, 12);
+public class TelaInicial extends JPanel {
 
-    public TelaInicial() {
-        setTitle("Bom de Bico - Home");
-        setSize(1024, 768);
-        // Define o fechamento padrão para SAIR da aplicação
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(0, 10));
+    public TelaInicial() {        
+        setLayout(new BorderLayout(10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10)); 
+        add(createHeaderPanel(), BorderLayout.NORTH);
+        add(createFooterPanel(), BorderLayout.SOUTH);
+        JPanel mainContentPanel = new JPanel();
+        mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
 
-        // 1. Cabeçalho (NORTH)
-        add(criarPainelCabecalho(), BorderLayout.NORTH);
+        mainContentPanel.add(createHeroPanel());
+        mainContentPanel.add(createCategoriesPanel());
+        mainContentPanel.add(createFeaturedProductsPanel());
+        mainContentPanel.add(createPromoBannerPanel());
 
-        // 2. Rodapé (SOUTH)
-        add(criarPainelRodape(), BorderLayout.SOUTH);
-
-        // 3. Conteúdo Principal (CENTER)
-        JPanel painelConteudoPrincipal = new JPanel();
-        painelConteudoPrincipal.setLayout(new BoxLayout(painelConteudoPrincipal, BoxLayout.Y_AXIS));
-        painelConteudoPrincipal.setBackground(Color.WHITE);
-        painelConteudoPrincipal.setBorder(new EmptyBorder(20, 20, 20, 20));
-
-        // Adiciona todas as seções da página
-        painelConteudoPrincipal.add(criarPainelDestaque());
-        painelConteudoPrincipal.add(Box.createRigidArea(new Dimension(0, 25))); // Espaçador
-        painelConteudoPrincipal.add(criarPainelCategorias());
-        painelConteudoPrincipal.add(Box.createRigidArea(new Dimension(0, 25))); // Espaçador
-        painelConteudoPrincipal.add(criarPainelProdutosDestaque());
-        painelConteudoPrincipal.add(Box.createRigidArea(new Dimension(0, 25))); // Espaçador
-        painelConteudoPrincipal.add(criarPainelPromocional());
-
-        // Coloca o painel principal dentro de um JScrollPane
-        JScrollPane scrollPane = new JScrollPane(painelConteudoPrincipal);
-        scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
-
+        JScrollPane scrollPane = new JScrollPane(mainContentPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    /**
-     * Cria o painel do cabeçalho
-     */
-    private JPanel criarPainelCabecalho() {
-        JPanel painelCabecalho = new JPanel(new BorderLayout(20, 0));
-        painelCabecalho.setBorder(new EmptyBorder(10, 20, 10, 20));
-        painelCabecalho.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+    private JPanel createHeaderPanel() {
+        JPanel headerPanel = new JPanel(new BorderLayout(10, 0));
+        headerPanel.add(new JLabel("Bom de Bico"), BorderLayout.WEST);
 
-        // Esquerda: Logo
-        JLabel logo = new JLabel("Bom de Bico");
-        logo.setFont(new Font("Arial", Font.BOLD, 20));
-        painelCabecalho.add(logo, BorderLayout.WEST);
+        JPanel navLinks = new JPanel(new FlowLayout());
+        navLinks.add(new JLabel("Categorias"));
+        navLinks.add(new JLabel("Promoções"));
+        navLinks.add(new JLabel("Blog"));
+        headerPanel.add(navLinks, BorderLayout.CENTER);
 
-        // Centro: Navegação
-        JPanel painelNavegacao = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        JButton btnCategorias = new JButton("Categorias/Pesquisa");
-        btnCategorias.addActionListener(this::abrirTelaPesquisa);
-        painelNavegacao.add(btnCategorias);
-        painelNavegacao.add(new JLabel("Blog")); // Placeholder
-        painelCabecalho.add(painelNavegacao, BorderLayout.CENTER);
-
-        // Direita: Ações do Usuário
-        JPanel painelUsuario = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        JPanel rightPanel = new JPanel(new FlowLayout());
+        rightPanel.add(new JTextField("Busca...", 15));
         
-        JButton btnCadastro = new JButton("Cadastrar");
-        btnCadastro.addActionListener(this::abrirTelaCadastro);
-        painelUsuario.add(btnCadastro);
+    
+        JLabel userLabel = new JLabel("[Usuário]");
+        userLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        userLabel.setForeground(Color.BLUE); 
+        userLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Link para TelaPerfil
+                TelaPerfil telaPerfil = new TelaPerfil();
+                telaPerfil.setVisible(true);
+                Window janelaAtual = SwingUtilities.getWindowAncestor(userLabel);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+        });
+        rightPanel.add(userLabel);
         
-        JButton btnPerfil = new JButton("Meu Perfil");
-        btnPerfil.addActionListener(this::abrirTelaPerfil);
-        painelUsuario.add(btnPerfil);
+        rightPanel.add(new JLabel("[Favoritos]"));
 
-        JButton btnCarrinho = new JButton("Carrinho");
-        btnCarrinho.addActionListener(this::abrirTelaCarrinho);
-        painelUsuario.add(btnCarrinho);
+    
+        JLabel cartLabel = new JLabel("[Carrinho]");
+        cartLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        cartLabel.setForeground(Color.BLUE); 
         
-        painelCabecalho.add(painelUsuario, BorderLayout.EAST);
-        return painelCabecalho;
+        cartLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Link para TelaCarrinho
+                TelaCarrinho telaCarrinho = new TelaCarrinho();
+                telaCarrinho.setVisible(true);
+                
+                Window janelaAtual = SwingUtilities.getWindowAncestor(cartLabel);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+        });
+        rightPanel.add(cartLabel);
+    
+        
+        headerPanel.add(rightPanel, BorderLayout.EAST);
+        
+        return headerPanel;
+    }
+    
+    private JPanel createHeroPanel() {
+        JPanel heroPanel = new JPanel(new BorderLayout());
+        heroPanel.setBorder(BorderFactory.createTitledBorder("")); // Apenas uma borda
+
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        
+        textPanel.add(new JLabel("Nova Linha de Rações Premium"));
+        textPanel.add(new JLabel("Nutrição completa para a saúde e felicidade da sua ave."));
+        textPanel.add(new JButton("Confira Agora"));
+        
+        heroPanel.add(textPanel, BorderLayout.WEST);
+        heroPanel.add(new JLabel("[Imagem de Arara]"), BorderLayout.CENTER);
+        return heroPanel;
     }
 
-    /**
-     * Cria o painel "Hero" (Banner principal da Arara)
-     */
-    private JPanel criarPainelDestaque() {
-        JPanel painelDestaque = new JPanel(new BorderLayout(10, 10));
-        painelDestaque.setBorder(new EmptyBorder(20, 20, 20, 20));
-        painelDestaque.setBackground(new Color(245, 245, 245)); // Fundo cinza claro
+    private JPanel createCategoriesPanel() {
+        JPanel sectionPanel = new JPanel(new BorderLayout());
+        sectionPanel.setBorder(BorderFactory.createTitledBorder("Navegue por Categorias"));
 
-        JLabel imgLabel = new JLabel("[Imagem de uma Arara]", SwingConstants.CENTER);
-        imgLabel.setFont(new Font("Arial", Font.ITALIC, 18));
-        imgLabel.setPreferredSize(new Dimension(0, 200));
-        painelDestaque.add(imgLabel, BorderLayout.CENTER);
+        JPanel gridPanel = new JPanel(new GridLayout(1, 5, 10, 10)); 
+        gridPanel.add(createCategoryItem("Rações"));
+        gridPanel.add(createCategoryItem("Gaiolas"));
+        gridPanel.add(createCategoryItem("Brinquedos"));
+        gridPanel.add(createCategoryItem("Saúde"));
+        gridPanel.add(createCategoryItem("Acessórios"));
 
-        JPanel painelTexto = new JPanel();
-        painelTexto.setLayout(new BoxLayout(painelTexto, BoxLayout.Y_AXIS));
-        painelTexto.setOpaque(false); // Transparente
-
-        JLabel titulo = new JLabel("Nova Linha de Rações Premium");
-        titulo.setFont(FONTE_TITULO);
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        painelTexto.add(titulo);
-        
-        painelTexto.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JButton btnAcao = new JButton("Confira Agora");
-        btnAcao.addActionListener(this::abrirTelaPesquisa); // Link para Pesquisa
-        btnAcao.setAlignmentX(Component.CENTER_ALIGNMENT);
-        painelTexto.add(btnAcao);
-        
-        painelDestaque.add(painelTexto, BorderLayout.SOUTH);
-        return painelDestaque;
+        sectionPanel.add(gridPanel, BorderLayout.CENTER);
+        return sectionPanel;
     }
 
-    /**
-     * Cria a seção "Navegue por Categorias"
-     */
-    private JPanel criarPainelCategorias() {
-        JPanel painelSecao = new JPanel(new BorderLayout(0, 15));
+    private JPanel createCategoryItem(String name) {
+        JPanel itemPanel = new JPanel();
+        itemPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
+        itemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        itemPanel.setBackground(Color.WHITE);
         
-        JLabel titulo = new JLabel("Navegue por Categorias");
-        titulo.setFont(FONTE_SUBTITULO);
-        painelSecao.add(titulo, BorderLayout.NORTH);
-
-        JPanel painelGrade = new JPanel(new GridLayout(1, 0, 15, 15));
+        itemPanel.setPreferredSize(new Dimension(150, 100));
+        itemPanel.setMaximumSize(new Dimension(200, 120));
         
-        JButton btnRacoes = new JButton("Rações");
-        btnRacoes.addActionListener(this::abrirTelaPesquisa);
-        painelGrade.add(btnRacoes);
-
-        JButton btnGaiolas = new JButton("Gaiolas");
-        btnGaiolas.addActionListener(this::abrirTelaPesquisa);
-        painelGrade.add(btnGaiolas);
-
-        JButton btnBrinquedos = new JButton("Brinquedos");
-        btnBrinquedos.addActionListener(this::abrirTelaPesquisa);
-        painelGrade.add(btnBrinquedos);
-
-        JButton btnSaude = new JButton("Saúde");
-        btnSaude.addActionListener(this::abrirTelaPesquisa);
-        painelGrade.add(btnSaude);
-
-        painelSecao.add(painelGrade, BorderLayout.CENTER);
-        return painelSecao;
+        JLabel imgLabel = new JLabel("[Img " + name + "]");
+        JLabel nameLabel = new JLabel(name);
+        
+        imgLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        itemPanel.add(Box.createVerticalGlue());
+        itemPanel.add(imgLabel);
+        itemPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        itemPanel.add(nameLabel);
+        itemPanel.add(Box.createVerticalGlue());
+        
+        itemPanel.setOpaque(true);
+        itemPanel.setFocusable(true);
+        
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Link para TelaPesquisa
+                TelaPesquisa framePesquisa = new TelaPesquisa(); 
+                framePesquisa.setVisible(true);
+                Window janelaAtual = SwingUtilities.getWindowAncestor(itemPanel);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) { itemPanel.setBackground(Color.LIGHT_GRAY); }
+            @Override
+            public void mouseExited(MouseEvent e) { itemPanel.setBackground(Color.WHITE); }
+        };
+        
+        itemPanel.addMouseListener(mouseAdapter);
+        imgLabel.addMouseListener(mouseAdapter);
+        nameLabel.addMouseListener(mouseAdapter);
+        
+        return itemPanel;
     }
 
-    /**
-     * Cria a seção "Produtos em Destaque"
-     */
-    private JPanel criarPainelProdutosDestaque() {
-        JPanel painelSecao = new JPanel(new BorderLayout(0, 15));
-        
-        JLabel titulo = new JLabel("Produtos em Destaque");
-        titulo.setFont(FONTE_SUBTITULO);
-        painelSecao.add(titulo, BorderLayout.NORTH);
+    private JPanel createFeaturedProductsPanel() {
+        JPanel sectionPanel = new JPanel(new BorderLayout());
+        sectionPanel.setBorder(BorderFactory.createTitledBorder("Produtos em Destaque"));
 
-        JPanel painelGrade = new JPanel(new GridLayout(1, 0, 15, 15));
+        JPanel gridPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+        gridPanel.add(createSimpleProductCard("Mix de Sementes", "R$ 46,90"));
+        gridPanel.add(createSimpleProductCard("Gaiola Ornamental", "R$ 299,99"));
+        gridPanel.add(createSimpleProductCard("Brinquedo Madeira", "R$ 78,50"));
+        gridPanel.add(createSimpleProductCard("Bebedouro Clean", "R$ 36,00"));
 
-        // Adiciona "cards" de produto simplificados
-        painelGrade.add(criarCardProdutoSimples("Mix de Sementes"));
-        painelGrade.add(criarCardProdutoSimples("Gaiola Ornamental"));
-        painelGrade.add(criarCardProdutoSimples("Brinquedo Interativo"));
-        painelGrade.add(criarCardProdutoSimples("Bebedouro Automático"));
-
-        painelSecao.add(painelGrade, BorderLayout.CENTER);
-        return painelSecao;
+        sectionPanel.add(gridPanel, BorderLayout.CENTER);
+        return sectionPanel;
     }
 
-    /**
-     * Helper para criar um "card" de produto simples e agradável
-     */
-    private JPanel criarCardProdutoSimples(String nome) {
+    private JPanel createPromoBannerPanel() {
+        JPanel bannerPanel = new JPanel(new BorderLayout(10, 0));
+        bannerPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        bannerPanel.add(new JLabel("Frete Grátis em Pedidos Acima de R$199"), BorderLayout.CENTER);
+        bannerPanel.add(new JButton("Ver Produtos"), BorderLayout.EAST);
+        return bannerPanel;
+    }
+
+    private JPanel createFooterPanel() {
+        JPanel footerPanel = new JPanel(new GridLayout(1, 4, 10, 10));
+        footerPanel.setBorder(BorderFactory.createTitledBorder("Rodapé"));
+        footerPanel.add(new JLabel("Bom de Bico"));
+        footerPanel.add(new JLabel("Institucional"));
+        footerPanel.add(new JLabel("Ajuda"));
+        footerPanel.add(new JLabel("Newsletter"));
+        return footerPanel;
+    }
+    
+    private JPanel createSimpleProductCard(String name, String price) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createEtchedBorder());
-        card.setBackground(Color.WHITE);
-
-        JLabel img = new JLabel("[Imagem: " + nome + "]");
-        img.setFont(FONTE_PADRAO);
-        img.setAlignmentX(Component.CENTER_ALIGNMENT);
-        img.setBorder(new EmptyBorder(30, 10, 30, 10));
-        card.add(img);
-
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        JLabel nomeLabel = new JLabel(nome);
-        nomeLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        nomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        card.add(nomeLabel);
-
-        card.add(Box.createRigidArea(new Dimension(0, 5)));
-
-        JLabel precoLabel = new JLabel("R$ 49,90");
-        precoLabel.setFont(FONTE_PADRAO);
-        precoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        card.add(precoLabel);
-
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Botão "Adicionar" que abre a tela de pesquisa
-        JButton btnAdicionar = new JButton("Ver Detalhes");
-        btnAdicionar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnAdicionar.addActionListener(this::abrirTelaPesquisa);
-        card.add(btnAdicionar);
-
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
+        card.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        card.add(new JLabel("[Imagem de " + name + "]"));
+        card.add(new JLabel(name));
+        card.add(new JLabel(price));
+        card.add(new JButton("Adicionar ao Carrinho"));
         return card;
     }
 
-    /**
-     * Cria o banner de "Frete Grátis"
-     */
-    private JPanel criarPainelPromocional() {
-        JPanel painelBanner = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        painelBanner.setBackground(new Color(232, 245, 233));
-        painelBanner.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
-        JLabel titulo = new JLabel("Frete Grátis em Pedidos Acima de R$199");
-        titulo.setFont(new Font("Arial", Font.BOLD, 16));
-        painelBanner.add(titulo);
-        
-        JButton btnVerProdutos = new JButton("Ver Produtos");
-        btnVerProdutos.addActionListener(this::abrirTelaPesquisa); // Link para Pesquisa
-        painelBanner.add(btnVerProdutos);
-
-        return painelBanner;
-    }
-
-    /**
-     * Cria o painel do rodapé
-     */
-    private JPanel criarPainelRodape() {
-        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 10));
-        painelRodape.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
-        
-        painelRodape.add(new JLabel("Sobre Nós"));
-        painelRodape.add(new JLabel("Contato"));
-        painelRodape.add(new JLabel("FAQ"));
-        painelRodape.add(new JLabel("© 2024 Bom de Bico"));
-
-        return painelRodape;
-    }
-
-    // --- MÉTODOS DE AÇÃO PARA NAVEGAÇÃO ---
-
-    private void abrirTelaPesquisa(ActionEvent e) {
-        TelaPesquisa telaPesquisa = new TelaPesquisa();
-        // DISPOSE_ON_CLOSE: Fecha apenas esta janela, não a aplicação inteira
-        telaPesquisa.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        telaPesquisa.setVisible(true);
-    }
-
-    private void abrirTelaCarrinho(ActionEvent e) {
-        TelaCarrinho telaCarrinho = new TelaCarrinho();
-        telaCarrinho.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        telaCarrinho.setVisible(true);
-    }
-
-    private void abrirTelaPerfil(ActionEvent e) {
-        TelaPerfil telaPerfil = new TelaPerfil();
-        telaPerfil.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        telaPerfil.setVisible(true);
-    }
-    
-    private void abrirTelaCadastro(ActionEvent e) {
-        TelaCadastro telaCadastro = new TelaCadastro();
-        telaCadastro.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        telaCadastro.setVisible(true);
-    }
-
-    /**
-     * Método Main
-     */
-    public static void main(String[] args) {
-        try {
-            // Usa a aparência do sistema operacional
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            new TelaInicial().setVisible(true);
-        });
-    }
 }
