@@ -4,9 +4,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class PesquisaSwingSimples extends JFrame {
+public class Pesquisa extends JFrame {
 
-    public PesquisaSwingSimples() {
+    public Pesquisa() {
         setTitle("Pesquisa de Produtos - Bom de Bico");
         setSize(1100, 700); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -144,7 +144,7 @@ public class PesquisaSwingSimples extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new PesquisaSwingSimples().setVisible(true);
+            new Pesquisa().setVisible(true);
         });
     }
 }
