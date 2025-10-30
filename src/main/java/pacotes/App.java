@@ -1,5 +1,8 @@
 package pacotes;
 
+import pacotes.view.telaCadastro;
+import pacotes.view.telaLogin;
+
 /**
  * Hello world!
  */
@@ -12,6 +15,8 @@ public final class App {
      * @param args The arguments of the program.
      */
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        telaLogin janelaLogin = new telaLogin();
+        telaCadastro janelaCadastro = new telaCadastro();
+        janelaLogin.janela();
     }
 }
