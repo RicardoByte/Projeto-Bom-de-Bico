@@ -2,43 +2,28 @@ package pacotes.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
-/**
- * A tela Home, simplificada e convertida para um JPanel.
- * Ela recebe uma "ação" (Runnable) em seu construtor, que será
- * executada quando o botão "Ver Produtos" for clicado.
- */
+import java.awt.event.MouseEvent; 
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import pacotes.view.Pesquisa;
+
 public class Home extends JPanel {
 
-    // A ação que será executada para navegar
-    private Runnable onNavigateToSearch;
 
-    public Home(Runnable onNavigateToSearch) {
-        this.onNavigateToSearch = onNavigateToSearch;
-        
-        // Layout principal da tela Home
+    public Home() {        
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(10, 10, 10, 10)); // Um padding simples
-
-        // 1. Cabeçalho (NORTH)
         add(createHeaderPanel(), BorderLayout.NORTH);
-
-        // 2. Rodapé (SOUTH)
         add(createFooterPanel(), BorderLayout.SOUTH);
-
-        // 3. Conteúdo Principal (CENTER)
-        // Painel que conterá todas as seções empilhadas
         JPanel mainContentPanel = new JPanel();
         mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
 
-        // Adiciona todas as seções da página
         mainContentPanel.add(createHeroPanel());
         mainContentPanel.add(createCategoriesPanel());
         mainContentPanel.add(createFeaturedProductsPanel());
         mainContentPanel.add(createPromoBannerPanel());
 
-        // Coloca o painel principal dentro de um JScrollPane
         JScrollPane scrollPane = new JScrollPane(mainContentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -99,19 +84,65 @@ public class Home extends JPanel {
 
     private JPanel createCategoryItem(String name) {
         JPanel itemPanel = new JPanel();
+        itemPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
         itemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        itemPanel.setBackground(Color.WHITE);
         
-        itemPanel.add(new JLabel("[Img " + name + "]"));
-        itemPanel.add(new JLabel(name));
+        // Define tamanho preferido
+        itemPanel.setPreferredSize(new Dimension(150, 100));
+        itemPanel.setMaximumSize(new Dimension(200, 120));
+        
+        JLabel imgLabel = new JLabel("[Img " + name + "]");
+        JLabel nameLabel = new JLabel(name);
+        
+        // Centraliza os labels
+        imgLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        itemPanel.add(Box.createVerticalGlue());
+        itemPanel.add(imgLabel);
+        itemPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        itemPanel.add(nameLabel);
+        itemPanel.add(Box.createVerticalGlue());
+        
+        // Torna o painel opaco e focável
+        itemPanel.setOpaque(true);
+        itemPanel.setFocusable(true);
+        
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Pesquisa framePesquisa = new Pesquisa();
+                framePesquisa.setVisible(true);
+                Window janelaAtual = SwingUtilities.getWindowAncestor(itemPanel);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                itemPanel.setBackground(Color.LIGHT_GRAY);
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                itemPanel.setBackground(Color.WHITE);
+            }
+        };
+        
+        itemPanel.addMouseListener(mouseAdapter);
+        imgLabel.addMouseListener(mouseAdapter);
+        nameLabel.addMouseListener(mouseAdapter);
+        
         return itemPanel;
     }
-
     private JPanel createFeaturedProductsPanel() {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBorder(BorderFactory.createTitledBorder("Produtos em Destaque"));
 
-        JPanel gridPanel = new JPanel(new GridLayout(1, 4, 10, 10)); // 1 linha, 4 colunas
+        JPanel gridPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         gridPanel.add(createSimpleProductCard("Mix de Sementes", "R$ 46,90"));
         gridPanel.add(createSimpleProductCard("Gaiola Ornamental", "R$ 299,99"));
         gridPanel.add(createSimpleProductCard("Brinquedo Madeira", "R$ 78,50"));
@@ -129,16 +160,12 @@ public class Home extends JPanel {
         
         JButton viewProductsButton = new JButton("Ver Produtos");
         
-        // ***** PONTO DE NAVEGAÇÃO *****
-        // Aqui conectamos o botão à ação que foi passada no construtor
-        viewProductsButton.addActionListener(e -> onNavigateToSearch.run());
-        
         bannerPanel.add(viewProductsButton, BorderLayout.EAST);
         return bannerPanel;
     }
 
     private JPanel createFooterPanel() {
-        JPanel footerPanel = new JPanel(new GridLayout(1, 4, 10, 10)); // 1 linha, 4 colunas
+        JPanel footerPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         footerPanel.setBorder(BorderFactory.createTitledBorder("Rodapé"));
         
         footerPanel.add(new JLabel("Bom de Bico"));
@@ -149,7 +176,6 @@ public class Home extends JPanel {
         return footerPanel;
     }
     
-    // Helper para criar um card de produto simples (copiado da tela de Pesquisa)
     private JPanel createSimpleProductCard(String name, String price) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
