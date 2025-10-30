@@ -10,14 +10,16 @@ public class PagamentoCartao implements MetodoPagamento {
     private String nomeTitular;
     private String validade;
     private String cvv;
+    private String metodo;
 
-    public PagamentoCartao(double valor, String numeroCartao, String nomeTitular, String validade, String cvv) {
+    public PagamentoCartao(double valor, String numeroCartao, String nomeTitular, String validade, String cvv, boolean debito) {
         this.valor = valor;
         this.numeroCartao = numeroCartao;
         this.nomeTitular = nomeTitular;
         this.validade = validade;
         this.cvv = cvv;
         this.dataPagamento = LocalDateTime.now();
+        this.metodo = debito ? "Débito" : "Crédito" ;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class PagamentoCartao implements MetodoPagamento {
 
     @Override
     public String getMetodo() {
-        return "Cartão de Crédito/Débito";
+        return this.metodo;
     }
 
     @Override

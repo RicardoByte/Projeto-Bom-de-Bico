@@ -8,6 +8,9 @@ public class Endereco {
     private String estado;
     private String cep;
 
+    public Endereco() {
+    }
+
     public Endereco(String rua, String numero, String cidade, String estado, String cep) {
         this.rua = rua;
         this.numero = numero;
@@ -58,6 +61,6 @@ public class Endereco {
 
     @Override
     public String toString() {
-        return rua + ", " + numero + " - " + cidade + "/" + estado + " (" + cep + ")";
+        return rua + ", " + numero + " - " + cidade + "/" + estado + " - CEP: " + cep;
     }
 }

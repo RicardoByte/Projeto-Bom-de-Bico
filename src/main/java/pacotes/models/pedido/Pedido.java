@@ -1,57 +1,66 @@
 package pacotes.models.pedido;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import pacotes.models.pagamento.MetodoPagamento;
-import pacotes.models.usuario.Cliente;
-import pacotes.models.produtos.Produto;
-
 public class Pedido {
-    private String idPedido;
-    private Date dataCriacao;
+    private int id;
+    private int carrinhoId;
     private String status;
-    private List<Produto> itensDoPedido;
-    private float totalPedido;
-    private MetodoPagamento metodoPagamento;
-    private Cliente cliente;
-    private int parcelas;
+    private String dataPedido;
 
-    public Pedido(String idPedido, Cliente cliente, List<Produto> itens, MetodoPagamento metodoPagamento) {
-        this.idPedido = idPedido;
-        this.dataCriacao = new Date();
-        this.status = "Pendente";
-        this.itensDoPedido = new ArrayList<>(itens);
-        this.metodoPagamento = metodoPagamento;
-        this.cliente = cliente;
-        this.parcelas = 1;
-        calcularTotal();
-    }
-    private void calcularTotal() {
-        totalPedido = 0;
-        for (Produto item : itensDoPedido) {
-            totalPedido += item.calcularPrecoTotal();
-        }
+    // Construtor completo
+    public Pedido(int id, int carrinhoId, String status, String dataPedido) {
+        this.id = id;
+        this.carrinhoId = carrinhoId;
+        this.status = status;
+        this.dataPedido = dataPedido;
     }
 
-    public void confirmarPedido() {
-        if (metodoPagamento.processarPagamento(totalPedido, parcelas)) {
-            status = "Pago";
-            System.out.println("Pedido confirmado para " + cliente.getNome());
-        } else {
-            System.out.println("Falha no pagamento.");
-        }
+    // Construtor sem ID (para novos pedidos)
+    public Pedido(int carrinhoId, String status, String dataPedido) {
+        this.carrinhoId = carrinhoId;
+        this.status = status;
+        this.dataPedido = dataPedido;
     }
 
-    public void cancelarPedido() {
-        status = "Cancelado";
-        System.out.println("Pedido cancelado.");
+    // Getters e Setters
+    public int getId() {
+        return id;
     }
 
-    public float getTotalPedido() {
-        return totalPedido;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCarrinhoId() {
+        return carrinhoId;
+    }
+
+    public void setCarrinhoId(int carrinhoId) {
+        this.carrinhoId = carrinhoId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDataPedido() {
+        return dataPedido;
+    }
+
+    public void setDataPedido(String dataPedido) {
+        this.dataPedido = dataPedido;
+    }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", carrinhoId=" + carrinhoId +
+                ", status='" + status + '\'' +
+                ", dataPedido='" + dataPedido + '\'' +
+                '}';
     }
 }

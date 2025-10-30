@@ -7,6 +7,7 @@ public class Entrega {
     private Endereco enderecoEntrega;
     private Transporte transporte;
     private LocalDateTime dataEnvio;
+    private LocalDateTime dataEntrega;
     private LocalDateTime dataEntregaPrevista;
     private boolean entregue;
 
@@ -15,6 +16,7 @@ public class Entrega {
         this.enderecoEntrega = enderecoEntrega;
         this.transporte = transporte;
         this.dataEnvio = LocalDateTime.now();
+        this.dataEntrega = null;
         this.dataEntregaPrevista = dataEnvio.plusDays((long) transporte.getTempoEstimado());
         this.entregue = false;
     }
@@ -35,6 +37,10 @@ public class Entrega {
         return dataEnvio;
     }
 
+    public LocalDateTime getDataEntrega() {
+        return dataEntrega;
+    }
+
     public LocalDateTime getDataEntregaPrevista() {
         return dataEntregaPrevista;
     }
@@ -45,6 +51,7 @@ public class Entrega {
 
     public void marcarComoEntregue() {
         this.entregue = true;
+        this.dataEntrega = LocalDateTime.now();
         System.out.println("Entrega marcada como concluída!");
     }
 

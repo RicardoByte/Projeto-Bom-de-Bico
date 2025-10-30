@@ -2,9 +2,12 @@ package pacotes.models.logistica;
 
 public class Transporte {
 
-    private String tipo; 
+    private String tipo;
     private double custo;
-    private double tempoEstimado; 
+    private double tempoEstimado;
+
+    public Transporte() {
+    }
 
     public Transporte(String tipo, double custo, double tempoEstimado) {
         this.tipo = tipo;

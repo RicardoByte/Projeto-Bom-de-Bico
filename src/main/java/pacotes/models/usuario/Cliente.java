@@ -1,29 +1,43 @@
 package pacotes.models.usuario;
 
 public class Cliente extends Usuario {
-    
     private String cpf;
-    private String endereco;
-    
-    public Cliente() {
-        super();
-    }
-    
-    public Cliente(String nome, String email, String senha, String telefone, String cpf) {
-        super(nome, email, senha, telefone);
+
+    // Construtor completo
+    public Cliente(int id, String nome, String email, String senha,
+                   String telefone, String endereco, int ativo,
+                   String cpf) {
+        super(id, nome, email, senha, telefone, endereco, "cliente", ativo);
         this.cpf = cpf;
     }
-    
+
+    // Construtor para novo cliente (sem ID)
+    public Cliente(String nome, String email, String senha,
+                   String telefone, String endereco,
+                   String cpf) {
+        super(0, nome, email, senha, telefone, endereco, 1, "cliente", null);
+        this.cpf = cpf;
+    }
+
     // Getters e Setters
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-    
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
-    
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
     @Override
     public String toString() {
-        return "Cliente{id=%d, nome='%s', email='%s', cpf='%s'}"
-            .formatted(id, nome, email, cpf);
+        return "Cliente{" +
+                "id=" + getId() +
+                ", nome='" + getNome() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", telefone='" + getTelefone() + '\'' +
+                ", endereco='" + getEndereco() + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", ativo=" + getAtivo() +
+                '}';
     }
 }
