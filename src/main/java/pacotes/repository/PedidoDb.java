@@ -192,12 +192,10 @@ public class PedidoDb {
 
     public static List<Pedido> listarPedidosPorCliente(int clienteId) {
         List<Pedido> pedidos = new ArrayList<>();
-        String sql = """
-            SELECT p.* FROM pedidos p
-            INNER JOIN carrinho c ON p.carrinho_id = c.id
-            WHERE c.cliente_id = ?
-            ORDER BY p.data_pedido DESC
-        """;
+        String sql = "SELECT p.* FROM pedidos p " +
+ "INNER JOIN carrinho c ON p.carrinho_id = c.id " +
+ "WHERE c.cliente_id = ? " +
+ "ORDER BY p.data_pedido DESC";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

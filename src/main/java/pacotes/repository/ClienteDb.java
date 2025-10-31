@@ -61,13 +61,11 @@ public class ClienteDb {
 
     public static List<Cliente> listarClientes() {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = """
-            SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, 
-                   u.endereco, u.ativo
-            FROM cliente c
-            INNER JOIN usuario u ON c.usuario_id = u.id
-            WHERE u.ativo = 1
-        """;
+        String sql = "SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, " +
+ "u.endereco, u.ativo " +
+ "FROM cliente c " +
+ "INNER JOIN usuario u ON c.usuario_id = u.id " +
+ "WHERE u.ativo = 1";
         
         try (Connection conn = ConexaoDb.conectar();
              Statement stmt = conn.createStatement();
@@ -95,13 +93,11 @@ public class ClienteDb {
     }
 
     public static Cliente buscarClientePorCpf(String cpf) {
-        String sql = """
-            SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, 
-                   u.endereco, u.ativo
-            FROM cliente c
-            INNER JOIN usuario u ON c.usuario_id = u.id
-            WHERE c.cpf = ?
-        """;
+        String sql = "SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, " +
+ "u.endereco, u.ativo " +
+ "FROM cliente c " +
+ "INNER JOIN usuario u ON c.usuario_id = u.id " +
+ "WHERE c.cpf = ?";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -130,13 +126,11 @@ public class ClienteDb {
     }
 
     public static Cliente buscarClientePorUsuarioId(int usuarioId) {
-        String sql = """
-            SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, 
-                   u.endereco, u.ativo
-            FROM cliente c
-            INNER JOIN usuario u ON c.usuario_id = u.id
-            WHERE c.usuario_id = ?
-        """;
+        String sql = "SELECT c.cpf, c.usuario_id, u.nome, u.email, u.senha, u.telefone, " +
+ "u.endereco, u.ativo " +
+ "FROM cliente c " +
+ "INNER JOIN usuario u ON c.usuario_id = u.id " +
+ "WHERE c.usuario_id = ?";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -63,13 +63,11 @@ public class AnuncianteDb {
 
     public static List<Anunciante> listarAnunciantes() {
         List<Anunciante> anunciantes = new ArrayList<>();
-        String sql = """
-            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
-                   u.ativo, a.cnpj, a.cpf
-            FROM anunciantes a
-            INNER JOIN usuario u ON a.usuario_id = u.id
-            WHERE a.ativo = 1
-        """;
+        String sql = "SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, " +
+ "u.ativo, a.cnpj, a.cpf " +
+ "FROM anunciantes a " +
+ "INNER JOIN usuario u ON a.usuario_id = u.id " +
+ "WHERE a.ativo = 1";
         
         try (Connection conn = ConexaoDb.conectar();
              Statement stmt = conn.createStatement();
@@ -98,13 +96,11 @@ public class AnuncianteDb {
     }
 
     public static Anunciante buscarAnunciantePorId(int usuarioId) {
-        String sql = """
-            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
-                   u.ativo, a.cnpj, a.cpf
-            FROM anunciantes a
-            INNER JOIN usuario u ON a.usuario_id = u.id
-            WHERE a.usuario_id = ?
-        """;
+        String sql = "SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, " +
+ "u.ativo, a.cnpj, a.cpf " +
+ "FROM anunciantes a " +
+ "INNER JOIN usuario u ON a.usuario_id = u.id " +
+ "WHERE a.usuario_id = ?";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -134,13 +130,11 @@ public class AnuncianteDb {
     }
 
     public static Anunciante buscarAnunciantePorCnpj(String cnpj) {
-        String sql = """
-            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
-                   u.ativo, a.cnpj, a.cpf
-            FROM anunciantes a
-            INNER JOIN usuario u ON a.usuario_id = u.id
-            WHERE a.cnpj = ?
-        """;
+        String sql = "SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, " +
+ "u.ativo, a.cnpj, a.cpf " +
+ "FROM anunciantes a " +
+ "INNER JOIN usuario u ON a.usuario_id = u.id " +
+ "WHERE a.cnpj = ?";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -170,13 +164,11 @@ public class AnuncianteDb {
     }
 
     public static Anunciante buscarAnunciantePorCpf(String cpf) {
-        String sql = """
-            SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, 
-                   u.ativo, a.cnpj, a.cpf
-            FROM anunciantes a
-            INNER JOIN usuario u ON a.usuario_id = u.id
-            WHERE a.cpf = ?
-        """;
+        String sql = "SELECT a.usuario_id, u.nome, u.email, u.senha, u.telefone, u.endereco, " +
+ "u.ativo, a.cnpj, a.cpf " +
+ "FROM anunciantes a " +
+ "INNER JOIN usuario u ON a.usuario_id = u.id " +
+ "WHERE a.cpf = ?";
         
         try (Connection conn = ConexaoDb.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

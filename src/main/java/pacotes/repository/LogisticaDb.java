@@ -10,10 +10,7 @@ public class LogisticaDb {
     
     public static boolean adicionarEntrega(Long entregaId, Endereco origem, Endereco destino, Transporte transporte, String status) {
         try {
-            String sql = """
-                INSERT INTO entrega (id, origem, destino, transporte, status)
-                VALUES (%d, '%s', '%s', '%s', '%s')
-            """.formatted(entregaId, origem.getCidade(), destino.getCidade(), transporte.getTipo(), status);
+            String sql = String.format("INSERT INTO entrega (id, origem, destino, transporte, status) VALUES (%d, '%s', '%s', '%s', '%s')", entregaId, origem.getCidade(), destino.getCidade(), transporte.getTipo(), status);
 
             return ConexaoDb.executarSql(sql);
 
