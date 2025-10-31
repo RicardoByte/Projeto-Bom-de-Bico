@@ -24,7 +24,7 @@ public class telaLogin {
             JFrame frameHome = new JFrame("Bom de Bico - Home");
             frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frameHome.setSize(1200, 800);
-            frameHome.add(new Home());
+            frameHome.add(new TelaInicial());
             frameHome.setLocationRelativeTo(null);
             frameHome.setVisible(true);
             janelaLogin.dispose();
