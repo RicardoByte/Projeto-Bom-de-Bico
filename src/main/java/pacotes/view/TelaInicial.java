@@ -3,7 +3,6 @@ package pacotes.view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.MouseEvent;
-import java.util.function.Supplier;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 
