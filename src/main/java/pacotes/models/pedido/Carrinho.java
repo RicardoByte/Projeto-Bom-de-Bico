@@ -54,7 +54,8 @@ public class Carrinho {
             }
             itemExistente.setQuantidade(novaQuantidade);
         } else {
-            itens.add(new ItemCarrinho(produto, quantidade));
+            ItemCarrinho novoItem = new ItemCarrinho(produto, quantidade);
+            itens.add(novoItem);
         }
         
         calcularTotal();
@@ -92,7 +93,7 @@ public class Carrinho {
     public double calcularTotal() {
         valorTotal = 0;
         for (ItemCarrinho item : itens) {
-            valorTotal += item.getProduto().getPreco() * item.getQuantidade();
+            valorTotal += item.getSubtotal();
         }
         return valorTotal;
     }
@@ -153,45 +154,5 @@ public class Carrinho {
                 ", totalItens=" + getTotalItens() +
                 ", valorTotal=" + String.format("%.2f", valorTotal) +
                 '}';
-    }
-
-    // Classe interna para representar item do carrinho
-    public static class ItemCarrinho {
-        private Produto produto;
-        private int quantidade;
-
-        public ItemCarrinho(Produto produto, int quantidade) {
-            this.produto = produto;
-            this.quantidade = quantidade;
-        }
-
-        public Produto getProduto() {
-            return produto;
-        }
-
-        public void setProduto(Produto produto) {
-            this.produto = produto;
-        }
-
-        public int getQuantidade() {
-            return quantidade;
-        }
-
-        public void setQuantidade(int quantidade) {
-            this.quantidade = quantidade;
-        }
-
-        public double getSubtotal() {
-            return produto.getPreco() * quantidade;
-        }
-
-        @Override
-        public String toString() {
-            return "ItemCarrinho{" +
-                    "produto=" + produto.getNome() +
-                    ", quantidade=" + quantidade +
-                    ", subtotal=" + String.format("%.2f", getSubtotal()) +
-                    '}';
-        }
     }
 }
