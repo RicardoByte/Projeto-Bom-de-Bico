@@ -4,6 +4,8 @@ import javax.swing.*;
 
 public class telaLogin {
 
+    private JLabel labelUsuario = new JLabel("Usuário:");
+    private JLabel labelSenha = new JLabel("Senha:");
     private JTextArea campoUsuario = new JTextArea();
     private JPasswordField senhaUsuario = new JPasswordField();
     private JButton botaoLogin = new JButton("Login");
@@ -42,11 +44,14 @@ public class telaLogin {
         janelaLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         janelaLogin.setVisible(true);
 
+        janelaLogin.add(labelUsuario); 
+        labelUsuario.setBounds(400, 80, 180, 20);
         janelaLogin.add(campoUsuario);
         campoUsuario.setBounds(400, 100, 180, 30);
 
+        janelaLogin.add(labelSenha);
+        labelSenha.setBounds(400, 130, 180, 20); 
         janelaLogin.add(senhaUsuario);
         senhaUsuario.setBounds(400, 150, 180, 30);
-        
     }
 }
