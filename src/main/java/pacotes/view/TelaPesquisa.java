@@ -185,6 +185,19 @@ public class TelaPesquisa extends JFrame {
         card.add(priceLabel);
         
         JButton addButton = new JButton("Adicionar ao Carrinho");
+        addButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Link para TelaCarrinho
+                TelaCarrinho telaCarrinho = new TelaCarrinho();
+                telaCarrinho.setVisible(true);
+                
+                Window janelaAtual = SwingUtilities.getWindowAncestor(addButton);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+        });
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.add(addButton);
         

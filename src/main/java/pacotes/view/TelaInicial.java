@@ -2,7 +2,8 @@ package pacotes.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.event.MouseEvent; 
+import java.awt.event.MouseEvent;
+import java.util.function.Supplier;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 
@@ -97,7 +98,6 @@ public class TelaInicial extends JPanel {
         
         textPanel.add(new JLabel("Nova Linha de Rações Premium"));
         textPanel.add(new JLabel("Nutrição completa para a saúde e felicidade da sua ave."));
-        textPanel.add(new JButton("Confira Agora"));
         
         heroPanel.add(textPanel, BorderLayout.WEST);
         heroPanel.add(new JLabel("[Imagem de Arara]"), BorderLayout.CENTER);
@@ -184,9 +184,9 @@ public class TelaInicial extends JPanel {
 
     private JPanel createPromoBannerPanel() {
         JPanel bannerPanel = new JPanel(new BorderLayout(10, 0));
+
         bannerPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         bannerPanel.add(new JLabel("Frete Grátis em Pedidos Acima de R$199"), BorderLayout.CENTER);
-        bannerPanel.add(new JButton("Ver Produtos"), BorderLayout.EAST);
         return bannerPanel;
     }
 
@@ -207,7 +207,23 @@ public class TelaInicial extends JPanel {
         card.add(new JLabel("[Imagem de " + name + "]"));
         card.add(new JLabel(name));
         card.add(new JLabel(price));
-        card.add(new JButton("Adicionar ao Carrinho"));
+
+        JButton adicionarCarrinho = new JButton("Adicionar ao Carrinho");
+        adicionarCarrinho.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Link para TelaCarrinho
+                TelaCarrinho telaCarrinho = new TelaCarrinho();
+                telaCarrinho.setVisible(true);
+                
+                Window janelaAtual = SwingUtilities.getWindowAncestor(adicionarCarrinho);
+                if (janelaAtual != null) {
+                    janelaAtual.dispose();
+                }
+            }
+        });
+
+        card.add(adicionarCarrinho);
         return card;
     }
 
